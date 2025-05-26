@@ -153,6 +153,7 @@ func (suite *Iteration3BSuite) TestCounter() {
 	count := 3
 	suite.Run("update sequence", func() {
 		req := httpc.R()
+		req.Header.Add("Content-Type", "text/plain")
 		id := strconv.Itoa(rand.Intn(256))
 		resp, err := req.Get("value/counter/testSetGet" + id)
 		noRespErr := suite.Assert().NoError(err,
