@@ -97,6 +97,7 @@ func (suite *Iteration3BSuite) TestGauge() {
 	suite.Run("update sequence", func() {
 		id := strconv.Itoa(rand.Intn(256))
 		req := httpc.R()
+		req.SetHeader("Content-Type", "text/plain")
 		for i := 0; i < count; i++ {
 			v := strings.TrimRight(fmt.Sprintf("%.3f", rand.Float64()*1000000), "0.")
 			resp, err := req.Post("update/gauge/testSetGet" + id + "/" + v)
