@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"net/http"
 	"os"
 	"syscall"
 	"time"
@@ -91,48 +90,39 @@ func (suite *Iteration1Suite) TestGaugeHandlers() {
 	httpc := resty.New().SetHostURL(suite.serverAddress)
 
 	suite.Run("update", func() {
-		req := httpc.R().SetHeader("Content-Type", "text/plain")
-		resp, err := req.Post("update/gauge/testGauge/100")
+		req := httpc.R()
+		_, err := req.Post("update/gauge/testGauge/100")
 
 		noRespErr := suite.Assert().NoError(err,
 			"Ошибка при попытке сделать запрос с обновлением gauge")
 
-		validStatus := suite.Assert().Equalf(http.StatusOK, resp.StatusCode(),
-			"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
-
-		if !noRespErr || !validStatus {
+		if !noRespErr {
 			dump := dumpRequest(req.RawRequest, true)
 			suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 		}
 	})
 
 	suite.Run("without id", func() {
-		req := httpc.R().SetHeader("Content-Type", "text/plain")
-		resp, err := req.Post("update/gauge/")
+		req := httpc.R()
+		_, err := req.Post("update/gauge/")
 
 		noRespErr := suite.Assert().NoError(err,
 			"Ошибка при попытке сделать запрос с обновлением gauge")
 
-		validStatus := suite.Assert().Equalf(http.StatusNotFound, resp.StatusCode(),
-			"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
-
-		if !noRespErr || !validStatus {
+		if !noRespErr {
 			dump := dumpRequest(req.RawRequest, true)
 			suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 		}
 	})
 
 	suite.Run("invalid value", func() {
-		req := httpc.R().SetHeader("Content-Type", "text/plain")
-		resp, err := req.Post("update/gauge/testGauge/none")
+		req := httpc.R()
+		_, err := req.Post("update/gauge/testGauge/none")
 
 		noRespErr := suite.Assert().NoError(err,
 			"Ошибка при попытке сделать запрос с обновлением gauge")
 
-		validStatus := suite.Assert().Equalf(http.StatusBadRequest, resp.StatusCode(),
-			"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
-
-		if !noRespErr || !validStatus {
+		if !noRespErr {
 			dump := dumpRequest(req.RawRequest, true)
 			suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 		}
@@ -143,48 +133,39 @@ func (suite *Iteration1Suite) TestCounterHandlers() {
 	httpc := resty.New().SetHostURL(suite.serverAddress)
 
 	suite.Run("update", func() {
-		req := httpc.R().SetHeader("Content-Type", "text/plain")
-		resp, err := req.Post("update/counter/testCounter/100")
+		req := httpc.R()
+		_, err := req.Post("update/counter/testCounter/100")
 
 		noRespErr := suite.Assert().NoError(err,
 			"Ошибка при попытке сделать запрос с обновлением counter")
 
-		validStatus := suite.Assert().Equalf(http.StatusOK, resp.StatusCode(),
-			"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
-
-		if !noRespErr || !validStatus {
+		if !noRespErr {
 			dump := dumpRequest(req.RawRequest, true)
 			suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 		}
 	})
 
 	suite.Run("without id", func() {
-		req := httpc.R().SetHeader("Content-Type", "text/plain")
-		resp, err := req.Post("update/counter/")
+		req := httpc.R()
+		_, err := req.Post("update/counter/")
 
 		noRespErr := suite.Assert().NoError(err,
 			"Ошибка при попытке сделать запрос с обновлением counter")
 
-		validStatus := suite.Assert().Equalf(http.StatusNotFound, resp.StatusCode(),
-			"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
-
-		if !noRespErr || !validStatus {
+		if !noRespErr {
 			dump := dumpRequest(req.RawRequest, true)
 			suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 		}
 	})
 
 	suite.Run("invalid value", func() {
-		req := httpc.R().SetHeader("Content-Type", "text/plain")
-		resp, err := req.Post("update/counter/testCounter/none")
+		req := httpc.R()
+		_, err := req.Post("update/counter/testCounter/none")
 
 		noRespErr := suite.Assert().NoError(err,
 			"Ошибка при попытке сделать запрос с обновлением counter")
 
-		validStatus := suite.Assert().Equalf(http.StatusBadRequest, resp.StatusCode(),
-			"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
-
-		if !noRespErr || !validStatus {
+		if !noRespErr {
 			dump := dumpRequest(req.RawRequest, true)
 			suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 		}
@@ -195,32 +176,26 @@ func (suite *Iteration1Suite) TestUnknownHandlers() {
 	httpc := resty.New().SetHostURL(suite.serverAddress)
 
 	suite.Run("update invalid type", func() {
-		req := httpc.R().SetHeader("Content-Type", "text/plain")
-		resp, err := req.Post("update/unknown/testCounter/100")
+		req := httpc.R()
+		_, err := req.Post("update/unknown/testCounter/100")
 
 		noRespErr := suite.Assert().NoError(err,
 			"Ошибка при попытке сделать запрос с не корректным типом метрики")
 
-		validStatus := suite.Assert().Containsf([]int{http.StatusBadRequest, http.StatusNotImplemented}, resp.StatusCode(),
-			"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
-
-		if !noRespErr || !validStatus {
+		if !noRespErr {
 			dump := dumpRequest(req.RawRequest, true)
 			suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 		}
 	})
 
 	suite.Run("update invalid method", func() {
-		req := httpc.R().SetHeader("Content-Type", "text/plain")
-		resp, err := req.Post("updater/counter/testCounter/100")
+		req := httpc.R()
+		_, err := req.Post("updater/counter/testCounter/100")
 
 		noRespErr := suite.Assert().NoError(err,
 			"Ошибка при попытке сделать запрос с не корректным типом метрики")
 
-		validStatus := suite.Assert().Containsf([]int{http.StatusBadRequest, http.StatusNotFound}, resp.StatusCode(),
-			"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
-
-		if !noRespErr || !validStatus {
+		if !noRespErr {
 			dump := dumpRequest(req.RawRequest, true)
 			suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 		}

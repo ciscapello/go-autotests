@@ -97,7 +97,6 @@ func (suite *Iteration3BSuite) TestGauge() {
 	suite.Run("update sequence", func() {
 		id := strconv.Itoa(rand.Intn(256))
 		req := httpc.R()
-		req.SetHeader("Content-Type", "text/plain")
 		for i := 0; i < count; i++ {
 			v := strings.TrimRight(fmt.Sprintf("%.3f", rand.Float64()*1000000), "0.")
 			resp, err := req.Post("update/gauge/testSetGet" + id + "/" + v)
@@ -153,7 +152,6 @@ func (suite *Iteration3BSuite) TestCounter() {
 	count := 3
 	suite.Run("update sequence", func() {
 		req := httpc.R()
-		req.Header.Add("Content-Type", "text/plain")
 		id := strconv.Itoa(rand.Intn(256))
 		resp, err := req.Get("value/counter/testSetGet" + id)
 		noRespErr := suite.Assert().NoError(err,
