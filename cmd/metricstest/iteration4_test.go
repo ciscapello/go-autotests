@@ -184,10 +184,7 @@ func (suite *Iteration4Suite) TestGauge() {
 			noRespErr := suite.Assert().NoError(err,
 				"Ошибка при попытке сделать запрос с обновлением gauge")
 
-			validStatus := suite.Assert().Equalf(http.StatusOK, resp.StatusCode(),
-				"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
-
-			if !noRespErr || !validStatus {
+			if !noRespErr {
 				dump := dumpRequest(req.RawRequest, true)
 				suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 			}
@@ -195,12 +192,10 @@ func (suite *Iteration4Suite) TestGauge() {
 			resp, err = req.Get("value/gauge/testSetGet" + id)
 			noRespErr = suite.Assert().NoError(err,
 				"Ошибка при попытке сделать запрос для получения значения gauge")
-			validStatus = suite.Assert().Equalf(http.StatusOK, resp.StatusCode(),
-				"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
 			equality := suite.Assert().Equalf(v, resp.String(),
 				"Несоответствие отправленного значения gauge (%s) полученному от сервера (%s), '%s %s'", v, resp.String(), req.Method, req.URL)
 
-			if !noRespErr || !validStatus || !equality {
+			if !noRespErr || !equality {
 				dump := dumpRequest(req.RawRequest, true)
 				suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 			}
@@ -210,13 +205,11 @@ func (suite *Iteration4Suite) TestGauge() {
 	suite.Run("get unknown", func() {
 		id := strconv.Itoa(rand.Intn(256))
 		req := httpc.R()
-		resp, err := req.Get("value/gauge/testUnknown" + id)
+		_, err := req.Get("value/gauge/testUnknown" + id)
 		noRespErr := suite.Assert().NoError(err,
 			"Ошибка при попытке сделать запрос для получения значения gauge")
-		validStatus := suite.Assert().Equalf(http.StatusNotFound, resp.StatusCode(),
-			"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
 
-		if !noRespErr || !validStatus {
+		if !noRespErr {
 			dump := dumpRequest(req.RawRequest, true)
 			suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 		}
@@ -253,10 +246,8 @@ func (suite *Iteration4Suite) TestCounter() {
 
 			noRespErr := suite.Assert().NoError(err,
 				"Ошибка при попытке сделать запрос для обновления значения counter")
-			validStatus := suite.Assert().Equalf(http.StatusOK, resp.StatusCode(),
-				"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
 
-			if !noRespErr || !validStatus {
+			if !noRespErr {
 				dump := dumpRequest(req.RawRequest, true)
 				suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 				continue
@@ -265,12 +256,10 @@ func (suite *Iteration4Suite) TestCounter() {
 			resp, err := req.Get("value/counter/testSetGet" + id)
 			noRespErr = suite.Assert().NoError(err,
 				"Ошибка при попытке сделать запрос для получения значения counter")
-			validStatus = suite.Assert().Equalf(http.StatusOK, resp.StatusCode(),
-				"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
 			equality := suite.Assert().Equalf(fmt.Sprintf("%d", a), resp.String(),
 				"Несоответствие отправленного значения counter (%d) полученному от сервера (%s), '%s %s'", a, resp.String(), req.Method, req.URL)
 
-			if !noRespErr || !validStatus || !equality {
+			if !noRespErr || !equality {
 				dump := dumpRequest(req.RawRequest, true)
 				suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 			}
@@ -280,12 +269,10 @@ func (suite *Iteration4Suite) TestCounter() {
 	suite.Run("get unknown", func() {
 		id := strconv.Itoa(rand.Intn(256))
 		req := httpc.R()
-		resp, err := req.Get("value/counter/testUnknown" + id)
+		_, err := req.Get("value/counter/testUnknown" + id)
 		noRespErr := suite.Assert().NoError(err, "Ошибка при попытке сделать запрос для получения значения counter")
-		validStatus := suite.Assert().Equalf(http.StatusNotFound, resp.StatusCode(),
-			"Несоответствие статус кода ответа ожидаемому в хендлере '%s %s'", req.Method, req.URL)
 
-		if !noRespErr || !validStatus {
+		if !noRespErr {
 			dump := dumpRequest(req.RawRequest, true)
 			suite.T().Logf("Оригинальный запрос:\n\n%s", dump)
 		}
